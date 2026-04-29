@@ -7,6 +7,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(data: any) {
+  async register(data: RegisterDto) {
     const userExists = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -37,7 +41,7 @@ export class AuthService {
     return user;
   }
 
-  async login(data: any) {
+  async login(data: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -62,7 +66,7 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(data: any) {
+  async forgotPassword(data: ForgotPasswordDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
@@ -87,7 +91,7 @@ export class AuthService {
     return { token };
   }
 
-  async resetPassword(data: any) {
+  async resetPassword(data: ResetPasswordDto) {
     const user = await this.prisma.user.findFirst({
       where: {
         resetPasswordToken: data.token,
